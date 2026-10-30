@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Expense &amp; Budget Visualizer</title>
+
+    <!-- Link ke file CSS kita -->
+    <link rel="stylesheet" href="css/style.css" />
+
+    <!-- Chart.js dari CDN — library untuk membuat pie chart -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  </head>
+
+  <body class="light">
+    <!-- =============================================
+         HEADER — Judul aplikasi + tombol dark mode
+    ============================================== -->
+    <header class="app-header">
+      <div class="header-inner">
+        <div class="header-brand">
+          <!-- Ikon dompet sederhana menggunakan emoji -->
+          <span class="header-icon">💰</span>
+          <div>
+            <h1 class="header-title">Expense &amp; Budget Visualizer</h1>
+            <p class="header-subtitle">Catat dan pantau pengeluaranmu</p>
+          </div>
+        </div>
+
+        <!-- Tombol untuk mengganti tema terang / gelap -->
+        <button id="themeToggle" class="btn-theme" aria-label="Toggle dark mode">
+          <span class="theme-icon">🌙</span>
+          <span class="theme-label">Dark Mode</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- =============================================
+         KONTEN UTAMA
+    ============================================== -->
+    <main class="app-main">
+
+      <!-- ==========================================
+           BAGIAN KIRI — Form input + daftar transaksi
+      =========================================== -->
+      <section class="panel panel-left">
+
+        <!-- ---- FORM TAMBAH TRANSAKSI ---- -->
+        <div class="card" id="formCard">
+          <h2 class="card-title">
+            <span>➕</span> Tambah Transaksi
+          </h2>
+
+          <form id="transactionForm" novalidate>
+
+            <!-- Field: Nama Item -->
+            <div class="form-group">
+              <label class="form-label" for="itemName">Nama Item</label>
+              <input
+                type="text"
+                id="itemName"
+                class="form-input"
+                placeholder="Contoh: Makan siang, Ojek, dll."
+                autocomplete="off"
+              />
+              <!-- Pesan error muncul di sini jika validasi gagal -->
+              <span class="form-error" id="errorItemName"></span>
+            </div>
+
+            <!-- Field: Jumlah (Rp) -->
+            <div class="form-group">
+              <label class="form-label" for="amount">Jumlah (Rp)</label>
+              <input
+                type="number"
+                id="amount"
+                class="form-input"
+                placeholder="Contoh: 25000"
+                min="1"
+                step="1"
+              />
+              <span class="form-error" id="errorAmount"></span>
+            </div>
+
+            <!-- Field: Kategori -->
+            <div class="form-group">
+              <label class="form-label" for="category">Kategori</label>
+              <select id="category" class="form-input form-select">
+                <option value="">-- Pilih Kategori --</option>
+                <option value="Food">🍔 Food (Makanan)</option>
+                <option value="Transport">🚗 Transport (Transportasi)</option>
+                <option value="Fun">🎮 Fun (Hiburan)</option>
+              </select>
+              <span class="form-error" id="errorCategory"></span>
+            </div>
+
+            <!-- Tombol Submit -->
+            <button type="submit" class="btn-primary" id="submitBtn">
+              Tambah Transaksi
+            </button>
+
+          </form>
+        </div>
+
+        <!-- ---- KONTROL SORTING ---- -->
+        <div class="card" id="sortCard">
+          <div class="sort-bar">
+            <span class="sort-label">Urutkan:</span>
+            <div class="sort-buttons">
+              <button class="btn-sort active" data-sort="date">📅 Terbaru</button>
+              <button class="btn-sort" data-sort="amount">💵 Jumlah</button>
+              <button class="btn-sort" data-sort="category">🏷️ Kategori</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ---- DAFTAR TRANSAKSI ---- -->
+        <div class="card" id="listCard">
+          <h2 class="card-title">
+            <span>📋</span> Daftar Transaksi
+            <!-- Badge jumlah transaksi -->
+            <span class="badge" id="transactionCount">0</span>
+          </h2>
+
+          <!-- Area scroll untuk daftar transaksi -->
+          <div class="transaction-list" id="transactionList">
+            <!-- Tampil jika belum ada transaksi -->
+            <div class="empty-state" id="emptyState">
+              <span class="empty-icon">🧾</span>
+              <p>Belum ada transaksi.</p>
+              <p>Tambahkan transaksi pertamamu!</p>
+            </div>
+            <!-- Item transaksi akan dirender di sini oleh JavaScript -->
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ==========================================
+           BAGIAN KANAN — Ringkasan + Chart
+      =========================================== -->
+      <section class="panel panel-right">
+
+        <!-- ---- TOTAL PENGELUARAN ---- -->
+        <div class="card" id="summaryCard">
+          <h2 class="card-title">
+            <span>📊</span> Ringkasan
+          </h2>
+
+          <div class="summary-total">
+            <span class="summary-label">Total Pengeluaran</span>
+            <span class="summary-amount" id="totalAmount">Rp 0</span>
+          </div>
+
+          <!-- Breakdown per kategori -->
+          <div class="category-breakdown" id="categoryBreakdown">
+            <div class="breakdown-item">
+              <span class="breakdown-dot dot-food"></span>
+              <span class="breakdown-name">Food</span>
+              <span class="breakdown-value" id="totalFood">Rp 0</span>
+            </div>
+            <div class="breakdown-item">
+              <span class="breakdown-dot dot-transport"></span>
+              <span class="breakdown-name">Transport</span>
+              <span class="breakdown-value" id="totalTransport">Rp 0</span>
+            </div>
+            <div class="breakdown-item">
+              <span class="breakdown-dot dot-fun"></span>
+              <span class="breakdown-name">Fun</span>
+              <span class="breakdown-value" id="totalFun">Rp 0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ---- PIE CHART ---- -->
+        <div class="card" id="chartCard">
+          <h2 class="card-title">
+            <span>🥧</span> Distribusi Pengeluaran
+          </h2>
+
+          <!-- Canvas adalah tempat Chart.js menggambar pie chart -->
+          <div class="chart-container">
+            <canvas id="expenseChart"></canvas>
+          </div>
+
+          <!-- Pesan saat belum ada data -->
+          <div class="chart-empty" id="chartEmpty">
+            <span>📉</span>
+            <p>Belum ada data untuk ditampilkan.</p>
+          </div>
+        </div>
+
+        <!-- ---- RINGKASAN BULANAN ---- -->
+        <div class="card" id="monthlyCard">
+          <h2 class="card-title">
+            <span>📅</span> Ringkasan Bulanan
+          </h2>
+
+          <!-- Tabel ringkasan per bulan -->
+          <div class="monthly-list" id="monthlyList">
+            <div class="empty-state" id="monthlyEmpty">
+              <span class="empty-icon">📆</span>
+              <p>Belum ada data bulanan.</p>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+
+    <!-- =============================================
+         FOOTER
+    ============================================== -->
+    <footer class="app-footer">
+      <p>Expense &amp; Budget Visualizer &copy; 2026 — RevoU Software Engineering Mini Bootcamp</p>
+    </footer>
+
+    <!-- Link ke file JavaScript kita — letakkan di bawah agar HTML sudah siap dibaca -->
+    <script src="js/script.js"></script>
+  </body>
+</html>

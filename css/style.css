@@ -1,0 +1,697 @@
+/* ================================================
+   style.css — Expense & Budget Visualizer
+   RevoU Software Engineering Mini Bootcamp
+   ================================================ */
+
+/* ------------------------------------------------
+   1. VARIABEL WARNA (CSS Custom Properties)
+      Dengan variabel ini, dark/light mode
+      cukup mengganti nilai variabel di body.dark
+   ------------------------------------------------ */
+body.light {
+  --color-bg:           #f0f4f8;
+  --color-surface:      #ffffff;
+  --color-surface-alt:  #f8fafc;
+  --color-border:       #e2e8f0;
+  --color-text:         #1a202c;
+  --color-text-muted:   #718096;
+  --color-primary:      #4f46e5;
+  --color-primary-hover:#4338ca;
+  --color-primary-light:#eef2ff;
+  --color-danger:       #e53e3e;
+  --color-danger-hover: #c53030;
+  --color-danger-light: #fff5f5;
+  --color-success:      #38a169;
+  --color-header-bg:    #4f46e5;
+  --color-header-text:  #ffffff;
+  --color-food:         #f6ad55;
+  --color-transport:    #63b3ed;
+  --color-fun:          #68d391;
+  --color-shadow:       rgba(0, 0, 0, 0.08);
+  --color-shadow-md:    rgba(0, 0, 0, 0.12);
+  --color-sort-active:  #4f46e5;
+  --color-sort-text:    #ffffff;
+  --color-badge-bg:     #4f46e5;
+  --color-badge-text:   #ffffff;
+}
+
+body.dark {
+  --color-bg:           #0f172a;
+  --color-surface:      #1e293b;
+  --color-surface-alt:  #263048;
+  --color-border:       #334155;
+  --color-text:         #f1f5f9;
+  --color-text-muted:   #94a3b8;
+  --color-primary:      #818cf8;
+  --color-primary-hover:#a5b4fc;
+  --color-primary-light:#1e1b4b;
+  --color-danger:       #fc8181;
+  --color-danger-hover: #feb2b2;
+  --color-danger-light: #2d1b1b;
+  --color-success:      #68d391;
+  --color-header-bg:    #1e293b;
+  --color-header-text:  #f1f5f9;
+  --color-food:         #f6ad55;
+  --color-transport:    #63b3ed;
+  --color-fun:          #68d391;
+  --color-shadow:       rgba(0, 0, 0, 0.3);
+  --color-shadow-md:    rgba(0, 0, 0, 0.5);
+  --color-sort-active:  #818cf8;
+  --color-sort-text:    #0f172a;
+  --color-badge-bg:     #818cf8;
+  --color-badge-text:   #0f172a;
+}
+
+/* ------------------------------------------------
+   2. RESET & BASE
+   ------------------------------------------------ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.6;
+  min-height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ------------------------------------------------
+   3. HEADER
+   ------------------------------------------------ */
+.app-header {
+  background-color: var(--color-header-bg);
+  color: var(--color-header-text);
+  padding: 0 1.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px var(--color-shadow-md);
+}
+
+.header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 0;
+  gap: 1rem;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.header-icon {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.header-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-header-text);
+  line-height: 1.2;
+}
+
+.header-subtitle {
+  font-size: 0.8rem;
+  opacity: 0.8;
+  margin-top: 0.1rem;
+}
+
+/* ---- Tombol Dark/Light Mode ---- */
+.btn-theme {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: var(--color-header-text);
+  padding: 0.45rem 0.9rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.btn-theme:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.theme-icon {
+  font-size: 1rem;
+}
+
+/* ------------------------------------------------
+   4. LAYOUT UTAMA
+   ------------------------------------------------ */
+.app-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  display: grid;
+  /* Desktop: dua kolom, kiri lebih kecil */
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+/* Panel kiri dan kanan — masing-masing berisi beberapa card */
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* ------------------------------------------------
+   5. CARD — Kotak konten utama
+   ------------------------------------------------ */
+.card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 1.25rem;
+  box-shadow: 0 2px 8px var(--color-shadow);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.card-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* ------------------------------------------------
+   6. FORM INPUT
+   ------------------------------------------------ */
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text);
+  margin-bottom: 0.35rem;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.6rem 0.85rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: var(--color-text);
+  background-color: var(--color-surface);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease,
+              background-color 0.3s ease;
+  outline: none;
+}
+
+.form-input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-light);
+}
+
+/* Hilangkan panah atas/bawah pada input number di beberapa browser */
+.form-input[type="number"]::-webkit-inner-spin-button,
+.form-input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+}
+
+.form-select {
+  cursor: pointer;
+  appearance: none;
+  /* Ikon panah dropdown kustom */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23718096' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.85rem center;
+  padding-right: 2.2rem;
+}
+
+/* Input yang memiliki error — border merah */
+.form-input.input-error {
+  border-color: var(--color-danger);
+}
+
+/* Pesan error di bawah input */
+.form-error {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--color-danger);
+  margin-top: 0.3rem;
+  min-height: 1rem;
+}
+
+/* ---- Tombol Submit ---- */
+.btn-primary {
+  width: 100%;
+  padding: 0.7rem;
+  background-color: var(--color-primary);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  margin-top: 0.25rem;
+}
+
+.btn-primary:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+/* ------------------------------------------------
+   7. SORT BAR — Tombol pengurutan
+   ------------------------------------------------ */
+.sort-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.sort-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.sort-buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.btn-sort {
+  padding: 0.35rem 0.75rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: 20px;
+  background: var(--color-surface-alt);
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-sort:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+/* Tombol sort yang sedang aktif */
+.btn-sort.active {
+  background-color: var(--color-sort-active);
+  border-color: var(--color-sort-active);
+  color: var(--color-sort-text);
+}
+
+/* ------------------------------------------------
+   8. DAFTAR TRANSAKSI
+   ------------------------------------------------ */
+.transaction-list {
+  max-height: 380px;
+  overflow-y: auto;
+  /* Agar scrollbar tidak menggeser layout */
+  padding-right: 4px;
+}
+
+/* Gaya scrollbar — hanya di browser Webkit (Chrome, Edge) */
+.transaction-list::-webkit-scrollbar {
+  width: 6px;
+}
+.transaction-list::-webkit-scrollbar-track {
+  background: var(--color-surface-alt);
+  border-radius: 3px;
+}
+.transaction-list::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 3px;
+}
+.transaction-list::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
+}
+
+/* Satu baris transaksi */
+.transaction-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  margin-bottom: 0.6rem;
+  background-color: var(--color-surface-alt);
+  transition: background-color 0.2s ease;
+  animation: slideIn 0.25s ease;
+}
+
+.transaction-item:last-child {
+  margin-bottom: 0;
+}
+
+.transaction-item:hover {
+  background-color: var(--color-primary-light);
+}
+
+/* Animasi saat item baru muncul */
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Titik warna kategori di sebelah kiri item */
+.item-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.item-dot.dot-food      { background-color: var(--color-food); }
+.item-dot.dot-transport { background-color: var(--color-transport); }
+.item-dot.dot-fun       { background-color: var(--color-fun); }
+
+/* Info teks transaksi */
+.item-info {
+  flex: 1;
+  min-width: 0; /* agar teks terpotong dengan ellipsis jika panjang */
+}
+
+.item-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.item-meta {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin-top: 0.1rem;
+}
+
+/* Badge kategori kecil */
+.item-category-badge {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.badge-food      { background-color: #fef3c7; color: #92400e; }
+.badge-transport { background-color: #dbeafe; color: #1e40af; }
+.badge-fun       { background-color: #dcfce7; color: #166534; }
+
+/* Mode gelap: badge warna disesuaikan */
+body.dark .badge-food      { background-color: #451a03; color: #fde68a; }
+body.dark .badge-transport { background-color: #1e3a5f; color: #93c5fd; }
+body.dark .badge-fun       { background-color: #14532d; color: #86efac; }
+
+/* Jumlah uang di sebelah kanan */
+.item-amount {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+/* Tombol hapus transaksi */
+.btn-delete {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 6px;
+  transition: color 0.2s ease, background-color 0.2s ease;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.btn-delete:hover {
+  color: var(--color-danger);
+  background-color: var(--color-danger-light);
+}
+
+/* ---- Badge jumlah transaksi di header card ---- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.4rem;
+  height: 1.4rem;
+  padding: 0 0.4rem;
+  background-color: var(--color-badge-bg);
+  color: var(--color-badge-text);
+  border-radius: 99px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-left: auto;
+}
+
+/* ---- State kosong (empty state) ---- */
+.empty-state {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: var(--color-text-muted);
+}
+
+.empty-icon {
+  font-size: 2.5rem;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+  font-size: 0.875rem;
+  line-height: 1.8;
+}
+
+/* ------------------------------------------------
+   9. RINGKASAN TOTAL
+   ------------------------------------------------ */
+.summary-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--color-primary);
+  color: #ffffff;
+  padding: 1rem 1.25rem;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+}
+
+.summary-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+.summary-amount {
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+/* Breakdown per kategori */
+.category-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.breakdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.875rem;
+}
+
+.breakdown-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.dot-food      { background-color: var(--color-food); }
+.dot-transport { background-color: var(--color-transport); }
+.dot-fun       { background-color: var(--color-fun); }
+
+.breakdown-name {
+  flex: 1;
+  color: var(--color-text-muted);
+}
+
+.breakdown-value {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+/* ------------------------------------------------
+   10. PIE CHART
+   ------------------------------------------------ */
+.chart-container {
+  position: relative;
+  width: 100%;
+  max-width: 280px;
+  margin: 0 auto;
+}
+
+.chart-empty {
+  text-align: center;
+  padding: 1.5rem;
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  display: none; /* ditampilkan oleh JS saat belum ada data */
+}
+
+.chart-empty span {
+  font-size: 2rem;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+/* ------------------------------------------------
+   11. RINGKASAN BULANAN
+   ------------------------------------------------ */
+.monthly-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Satu baris ringkasan per bulan */
+.monthly-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.65rem 0.85rem;
+  border-radius: 8px;
+  background-color: var(--color-surface-alt);
+  border: 1px solid var(--color-border);
+  font-size: 0.875rem;
+  animation: slideIn 0.25s ease;
+}
+
+.monthly-month {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.monthly-count {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.monthly-total {
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+/* ------------------------------------------------
+   12. FOOTER
+   ------------------------------------------------ */
+.app-footer {
+  text-align: center;
+  padding: 1.25rem;
+  margin-top: 1rem;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  border-top: 1px solid var(--color-border);
+}
+
+/* ------------------------------------------------
+   13. RESPONSIVE — Mobile (layar < 768px)
+   ------------------------------------------------ */
+@media (max-width: 768px) {
+  /* Ubah dari dua kolom menjadi satu kolom */
+  .app-main {
+    grid-template-columns: 1fr;
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .header-title {
+    font-size: 1rem;
+  }
+
+  .header-subtitle {
+    display: none;
+  }
+
+  .theme-label {
+    display: none; /* Sembunyikan teks, tampilkan ikon saja */
+  }
+
+  .summary-amount {
+    font-size: 1.2rem;
+  }
+
+  .sort-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .transaction-list {
+    max-height: 300px;
+  }
+}
+
+@media (max-width: 400px) {
+  .app-main {
+    padding: 0.75rem;
+  }
+
+  .card {
+    padding: 1rem;
+  }
+
+  .sort-buttons {
+    gap: 0.35rem;
+  }
+
+  .btn-sort {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.6rem;
+  }
+}
